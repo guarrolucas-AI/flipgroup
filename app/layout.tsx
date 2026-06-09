@@ -1,5 +1,7 @@
 import type { Metadata } from "next"
 import { Space_Grotesk, JetBrains_Mono } from "next/font/google"
+import { Toaster } from "sonner"
+import { LenisProvider } from "@/components/layout/lenis-provider"
 import "./globals.css"
 
 const spaceGrotesk = Space_Grotesk({
@@ -47,7 +49,20 @@ export default function RootLayout({
       className={`${spaceGrotesk.variable} ${jetbrainsMono.variable} h-full`}
     >
       <body className="grain min-h-full flex flex-col bg-[#070A0F] text-[#EDF2F7] antialiased">
-        {children}
+        <LenisProvider>
+          {children}
+        </LenisProvider>
+        <Toaster
+          theme="dark"
+          position="bottom-right"
+          toastOptions={{
+            style: {
+              background: "#131D2E",
+              border: "1px solid #1E2E48",
+              color: "#EDF2F7",
+            },
+          }}
+        />
       </body>
     </html>
   )
