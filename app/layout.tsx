@@ -33,9 +33,7 @@ export const metadata: Metadata = {
     title: "FLIP Group",
     description: "Capital · Constech · Construcción",
   },
-  icons: {
-    icon: "/favicon.ico",
-  },
+  // favicon auto-generado desde app/icon.tsx y app/apple-icon.tsx
 }
 
 export default function RootLayout({
