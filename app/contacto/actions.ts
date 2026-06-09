@@ -1,8 +1,6 @@
 "use server"
 
-import { Resend } from "resend"
-
-const resend = new Resend(process.env.RESEND_API_KEY)
+const BREVO_API = "https://api.brevo.com/v3/smtp/email"
 
 const TIPO_LABELS: Record<string, string> = {
   capital: "💰 Inversión — FLIP Capital",
@@ -44,12 +42,9 @@ export async function sendContactEmail(
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Contacto FLIP Group</title>
 </head>
 <body style="margin:0;padding:0;background:#070A0F;font-family:'Segoe UI',system-ui,sans-serif;">
   <div style="max-width:560px;margin:40px auto;background:#0D1320;border:1px solid #1E2E48;border-radius:16px;overflow:hidden;">
-
-    <!-- Header -->
     <div style="padding:24px 32px;border-bottom:1px solid #1E2E48;background:#131D2E;">
       <div style="display:flex;align-items:center;gap:12px;">
         <div style="width:32px;height:32px;border:1px solid #E86A1A;border-radius:4px;display:flex;align-items:center;justify-content:center;">
@@ -61,15 +56,10 @@ export async function sendContactEmail(
         </div>
       </div>
     </div>
-
-    <!-- Body -->
     <div style="padding:32px;">
       <div style="margin-bottom:24px;">
-        <span style="display:inline-block;padding:4px 12px;background:rgba(232,106,26,0.12);border:1px solid rgba(232,106,26,0.25);border-radius:6px;color:#E86A1A;font-size:12px;font-weight:600;">
-          ${label}
-        </span>
+        <span style="display:inline-block;padding:4px 12px;background:rgba(232,106,26,0.12);border:1px solid rgba(232,106,26,0.25);border-radius:6px;color:#E86A1A;font-size:12px;font-weight:600;">${label}</span>
       </div>
-
       <table style="width:100%;border-collapse:collapse;margin-bottom:24px;">
         <tr>
           <td style="padding:12px 0;border-bottom:1px solid #1E2E48;color:#455570;font-size:12px;font-family:monospace;width:120px;">NOMBRE</td>
@@ -79,52 +69,53 @@ export async function sendContactEmail(
           <td style="padding:12px 0;border-bottom:1px solid #1E2E48;color:#455570;font-size:12px;font-family:monospace;">EMAIL</td>
           <td style="padding:12px 0;border-bottom:1px solid #1E2E48;color:#EDF2F7;font-size:14px;">${email}</td>
         </tr>
-        ${
-          company
-            ? `<tr>
+        ${company ? `<tr>
           <td style="padding:12px 0;border-bottom:1px solid #1E2E48;color:#455570;font-size:12px;font-family:monospace;">EMPRESA</td>
           <td style="padding:12px 0;border-bottom:1px solid #1E2E48;color:#EDF2F7;font-size:14px;">${company}</td>
-        </tr>`
-            : ""
-        }
+        </tr>` : ""}
       </table>
-
       <div style="margin-bottom:24px;">
         <div style="color:#455570;font-size:12px;font-family:monospace;margin-bottom:8px;">MENSAJE</div>
         <div style="background:#0A0F18;border:1px solid #1E2E48;border-radius:8px;padding:16px;color:#8896A8;font-size:14px;line-height:1.7;white-space:pre-wrap;">${message.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</div>
       </div>
-
       <a href="mailto:${email}?subject=Re: Tu consulta en FLIP Group"
-         style="display:inline-block;padding:12px 24px;background:#E86A1A;color:#070A0F;font-size:13px;font-weight:700;text-decoration:none;border-radius:8px;letter-spacing:0.05em;">
+         style="display:inline-block;padding:12px 24px;background:#E86A1A;color:#070A0F;font-size:13px;font-weight:700;text-decoration:none;border-radius:8px;">
         Responder a ${name} →
       </a>
     </div>
-
-    <!-- Footer -->
     <div style="padding:16px 32px;border-top:1px solid #1E2E48;text-align:center;">
-      <p style="color:#455570;font-size:11px;margin:0;font-family:monospace;">
-        flipgroup.com.ar · contacto@flipgroup.com.ar
-      </p>
+      <p style="color:#455570;font-size:11px;margin:0;font-family:monospace;">flipgroup.com.ar · contacto@flipgroup.com.ar</p>
     </div>
   </div>
 </body>
-</html>
-  `.trim()
+</html>`.trim()
 
   try {
-    await resend.emails.send({
-      // IMPORTANTE: Verificar flipgroup.com.ar en Resend dashboard
-      // Mientras tanto usar: onboarding@resend.dev
-      from: "FLIP Group <noreply@flipgroup.com.ar>",
-      to: ["contacto@flipgroup.com.ar"],
-      replyTo: email,
-      subject: `${label} — ${name}`,
-      html,
+    const res = await fetch(BREVO_API, {
+      method: "POST",
+      headers: {
+        "api-key": process.env.BREVO_API_KEY!,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({
+        sender: { name: "FLIP Group", email: "noreply@flipgroup.com.ar" },
+        to: [{ email: "contacto@flipgroup.com.ar", name: "FLIP Group" }],
+        replyTo: { email, name },
+        subject: `${label} — ${name}`,
+        htmlContent: html,
+      }),
     })
+
+    if (!res.ok) {
+      const body = await res.text()
+      console.error("[Brevo error]", res.status, body)
+      return { success: false, error: "Error enviando el mensaje. Intentá de nuevo o escribinos directamente." }
+    }
 
     return { success: true }
   } catch (err) {
-    console.error("[Resend error]", err)
-    return { success: false, error: "Error enviando el mensaje. Intentá de nuevo o escribinos directamente." }
+    console.error("[Brevo fetch error]", err)
+    return { success: false, error: "Error de conexión. Intentá de nuevo o escribinos directamente." }
   }
 }
