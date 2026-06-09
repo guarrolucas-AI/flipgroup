@@ -27,13 +27,13 @@ function CoreStructure() {
       {/* Outer icosahedron — orange wireframe */}
       <mesh ref={meshRef}>
         <icosahedronGeometry args={[2.2, 1]} />
-        <meshBasicMaterial color="#E86A1A" wireframe opacity={0.7} transparent />
+        <meshBasicMaterial color="#E86A1A" wireframe opacity={0.45} transparent />
       </mesh>
 
       {/* Inner octahedron — blue wireframe */}
       <mesh ref={innerRef}>
         <octahedronGeometry args={[1.2, 0]} />
-        <meshBasicMaterial color="#3B9EFF" wireframe opacity={0.9} transparent />
+        <meshBasicMaterial color="#3B9EFF" wireframe opacity={0.5} transparent />
       </mesh>
 
       {/* Center solid sphere — ambient glow */}
