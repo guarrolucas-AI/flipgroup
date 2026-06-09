@@ -5,6 +5,7 @@ import dynamic from "next/dynamic"
 import Link from "next/link"
 import { motion } from "framer-motion"
 import { ArrowDown, ExternalLink } from "lucide-react"
+import { FlipGroupLogo } from "@/components/brand/logo"
 
 const HeroScene = dynamic(() => import("./hero-scene"), {
   ssr: false,
@@ -90,18 +91,8 @@ export function Hero() {
           transition={{ duration: 0.9, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
         >
           {/* Logo mark */}
-          <div className="flex items-center gap-3 mb-4">
-            <div className="relative w-10 h-10 flex-shrink-0">
-              <div className="absolute inset-0 border-2 border-[#E86A1A] rounded rotate-[8deg] opacity-50" />
-              <div className="absolute inset-0 border-2 border-[#E86A1A] rounded -rotate-[8deg] opacity-80" />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-[#E86A1A] font-bold text-base tracking-widest">F</span>
-              </div>
-            </div>
-            <div className="flex flex-col leading-none">
-              <span className="text-[#EDF2F7] text-sm font-bold tracking-[0.2em]">FLIP</span>
-              <span className="text-[#8896A8] text-[10px] tracking-[0.35em] uppercase">GROUP</span>
-            </div>
+          <div className="mb-6">
+            <FlipGroupLogo size="lg" />
           </div>
 
           {/* Main title */}

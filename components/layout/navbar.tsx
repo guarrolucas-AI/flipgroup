@@ -5,6 +5,7 @@ import Link from "next/link"
 import { motion, AnimatePresence } from "framer-motion"
 import { Menu, X, ExternalLink } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { FlipGroupLogo } from "@/components/brand/logo"
 
 const NAV_LINKS = [
   { label: "Capital", href: "/capital", accent: "#C9A84C" },
@@ -40,19 +41,8 @@ export function Navbar() {
         <div className="max-w-7xl mx-auto px-6 lg:px-8 h-16 flex items-center justify-between">
 
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="relative w-8 h-8">
-              {/* F logo mark */}
-              <div className="absolute inset-0 border border-[#E86A1A] rounded-sm rotate-3 opacity-40 group-hover:opacity-70 transition-opacity" />
-              <div className="absolute inset-0 border border-[#E86A1A] rounded-sm -rotate-3 opacity-60 group-hover:opacity-100 transition-opacity" />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-[#E86A1A] font-bold text-sm tracking-widest">F</span>
-              </div>
-            </div>
-            <div className="flex flex-col leading-none">
-              <span className="text-[#EDF2F7] text-sm font-bold tracking-[0.15em]">FLIP</span>
-              <span className="text-[#8896A8] text-[9px] tracking-[0.3em] uppercase">GROUP</span>
-            </div>
+          <Link href="/" className="hover:opacity-80 transition-opacity">
+            <FlipGroupLogo size="md" />
           </Link>
 
           {/* Desktop nav */}
